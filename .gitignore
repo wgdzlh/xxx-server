@@ -1,0 +1,8 @@
+xxx-server
+xxx-server.exe
+/.vscode
+/.idea
+/build
+test*
+/*.py
+**/_*.json

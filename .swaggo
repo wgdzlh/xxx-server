@@ -1,0 +1,6 @@
+replace xxx-server/domain/entity.JSONTime string
+replace xxx-server/domain/entity.AnyJson object
+replace xxx-server/domain/entity.Int16Array array,integer
+replace github.com/lib/pq.Int64Array array,integer
+replace github.com/lib/pq.StringArray array,string
+replace github.com/lib/pq.Float64Array array,number

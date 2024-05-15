@@ -1,0 +1,43 @@
+[server]
+debug = false
+addr = ":8080"
+tmpDir = "/home/wgdzlh/dev/diit/xxx-server/test"
+
+[log]
+logPath = ""
+logLevel = "debug"
+format = "text"
+
+[db]
+dbConn = "postgres://postgres:mysecretpassword@host.docker.internal:5432/postgres?sslmode=disable"
+maxConn = 100
+maxIdleConn = 20
+autoMigrate = true
+# 是否开启sql日志输出
+logMode = false
+
+[ds]
+disable = true
+dbConn = ""
+maxConn = 10
+maxIdleConn = 2
+logMode = false
+
+[im]
+disable = true
+dbConn = ""
+maxConn = 10
+maxIdleConn = 2
+logMode = false
+
+[py]
+submitTimeout = 10
+
+[mq]
+disable = true
+
+[cron]
+disableRecover = false
+disableLoops = true
+xxxTifDirRoot = "/home/wgdzlh/dev/diit/xxx-server/test"
+themeDirRoot = "/home/wgdzlh/dev/diit/xxx-server/test"

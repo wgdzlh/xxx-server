@@ -1,0 +1,10 @@
+.git
+.gitignore
+.dockerignore
+LICENSE
+README.md
+Dockerfile
+Makefile
+config.toml
+test*
+/*.py

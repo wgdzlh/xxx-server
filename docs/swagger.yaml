@@ -1,0 +1,571 @@
+basePath: /xxx-server/v1
+definitions:
+  dto.NewXxxData:
+    properties:
+      district:
+        description: 地区
+        type: string
+      path:
+        description: 路径
+        type: string
+    type: object
+  entity.CronTask:
+    properties:
+      created_at:
+        description: 创建时间
+        type: string
+      dir:
+        description: 任务输出目录
+        type: string
+      end_at:
+        description: 结束时间
+        type: string
+      err_log:
+        description: 任务错误日志
+        type: string
+      ext:
+        description: 任务扩展信息
+        type: object
+      ext_id:
+        description: 关联的外部任务/流程ID
+        type: integer
+      genre:
+        description: 任务大类型 enum(cron,download)
+        type: string
+      id:
+        description: ID
+        type: integer
+      name:
+        description: 任务名称
+        type: string
+      params:
+        description: 任务参数
+        type: object
+      progress:
+        description: 进度
+        type: number
+      src_id:
+        description: 源任务ID
+        type: integer
+      start_at:
+        description: 开始时间
+        type: string
+      status:
+        description: 任务状态 enum(NotStarted,InProc,Done,Failed)
+        type: string
+      type:
+        description: 任务子类型 enum(short,mid,factor,deduce)
+        type: string
+    type: object
+  entity.FactorThemeReq:
+    properties:
+      adcode:
+        description: 行政区划编码
+        type: string
+      district:
+        description: 行政区划名称
+        type: string
+      district_level:
+        description: 行政区划级别，省级（province）或市级（city）
+        type: string
+      report_time:
+        description: 起报时刻（无需传入）
+        type: string
+      themes:
+        description: 需要下载的要素列表
+        items:
+          properties:
+            factor:
+              description: XXX要素, enum(降雨,气压,温度,湿度,风场)
+              type: string
+            title:
+              description: 专题图标题
+              type: string
+          type: object
+        type: array
+    type: object
+  entity.Setting:
+    properties:
+      id:
+        description: ID
+        type: integer
+      section:
+        description: 设置所属分栏，enum(预警-alert)
+        type: string
+      value:
+        description: 设置的值
+        type: object
+    type: object
+  resp.CronTaskResponse:
+    properties:
+      code:
+        description: code
+        enum:
+        - 200
+        - 400
+        - 401
+        - 500
+        type: integer
+      data:
+        $ref: '#/definitions/entity.CronTask'
+      msg:
+        description: message
+        type: string
+    type: object
+  resp.CronTasksResponse:
+    properties:
+      code:
+        description: code
+        enum:
+        - 200
+        - 400
+        - 401
+        - 500
+        type: integer
+      data:
+        properties:
+          list:
+            items:
+              $ref: '#/definitions/entity.CronTask'
+            type: array
+          total:
+            type: integer
+        type: object
+      msg:
+        description: message
+        type: string
+    type: object
+  resp.IdData:
+    properties:
+      id:
+        type: integer
+    type: object
+  resp.IdResponse:
+    properties:
+      code:
+        description: code
+        enum:
+        - 200
+        - 400
+        - 401
+        - 500
+        type: integer
+      data:
+        $ref: '#/definitions/resp.IdData'
+      msg:
+        description: message
+        type: string
+    type: object
+  resp.Response:
+    properties:
+      code:
+        description: code
+        enum:
+        - 200
+        - 400
+        - 401
+        - 500
+        type: integer
+      data:
+        description: data
+        type: object
+      msg:
+        description: message
+        type: string
+    type: object
+  resp.SettingResponse:
+    properties:
+      code:
+        description: code
+        enum:
+        - 200
+        - 400
+        - 401
+        - 500
+        type: integer
+      data:
+        $ref: '#/definitions/entity.Setting'
+      msg:
+        description: message
+        type: string
+    type: object
+  resp.SettingsResponse:
+    properties:
+      code:
+        description: code
+        enum:
+        - 200
+        - 400
+        - 401
+        - 500
+        type: integer
+      data:
+        items:
+          $ref: '#/definitions/entity.Setting'
+        type: array
+      msg:
+        description: message
+        type: string
+    type: object
+info:
+  contact: {}
+  description: XXX系统后端 HTTP REST API
+  title: XXX SERVER API
+  version: 0.0.1
+paths:
+  /setting:
+    delete:
+      parameters:
+      - description: ids
+        in: query
+        items:
+          type: integer
+        name: ids
+        required: true
+        type: array
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/resp.Response'
+      summary: 批量删除设置项
+      tags:
+      - 设置
+    get:
+      parameters:
+      - description: 设置所属的分栏，enum(预警-alert)
+        in: query
+        name: section
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/resp.SettingsResponse'
+      summary: 查询设置列表
+      tags:
+      - 设置
+  /setting/{id}:
+    get:
+      parameters:
+      - description: id
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/resp.SettingResponse'
+      summary: 获取单个设置项详情
+      tags:
+      - 设置
+  /setting/{section}:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: 设置所属的分栏
+        in: path
+        name: section
+        required: true
+        type: string
+      - description: 设置的值
+        in: body
+        name: value
+        required: true
+        schema:
+          type: object
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/resp.IdResponse'
+      summary: 新增设置项
+      tags:
+      - 设置
+  /setting/alert/{adcode}:
+    get:
+      parameters:
+      - description: adcode
+        in: path
+        name: adcode
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/resp.SettingResponse'
+      summary: 查询特定地区预警设置
+      tags:
+      - 设置
+  /setting/shapefile:
+    post:
+      consumes:
+      - multipart/form-data
+      description: '使用multipart form格式上传zip：curl -X POST http://xxx -F "file=@/home/test/test.zip"
+        -H "Content-Type: multipart/form-data"'
+      parameters:
+      - description: upload target
+        in: formData
+        name: file
+        required: true
+        type: file
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/resp.Response'
+      summary: 将包含shp的zip压缩包转为WKT(srid=4326)
+      tags:
+      - 设置
+  /task:
+    delete:
+      parameters:
+      - description: ids
+        in: query
+        items:
+          type: integer
+        name: ids
+        required: true
+        type: array
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/resp.Response'
+      summary: 批量删除后台任务
+      tags:
+      - 后台任务
+    get:
+      parameters:
+      - description: ID，支持多值
+        in: query
+        items:
+          type: integer
+        name: id
+        type: array
+      - description: 任务大类型：enum(自动任务-cron,下载任务-download)
+        in: query
+        name: genre
+        type: string
+      - description: 任务子类型：enum(短临降雨-short,7天预报-mid,专题图-factor,反演报告-deduce)
+        in: query
+        name: type
+        type: string
+      - description: 行政区划编码
+        in: query
+        name: adcode
+        type: string
+      - description: 要素类型
+        in: query
+        name: factor
+        type: string
+      - description: 任务状态：enum(NotStarted,InProc,Done,Failed)
+        in: query
+        name: status
+        type: string
+      - description: 创建时间（起止时间格式：2022-07-20 10:00:00,2022-07-21 10:00:00），只传一个表示不限制另一个
+        in: query
+        items:
+          type: string
+        name: created_at
+        type: array
+      - description: 页码，从1开始
+        in: query
+        name: page
+        type: integer
+      - description: 页面大小，默认10
+        in: query
+        name: size
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/resp.CronTasksResponse'
+      summary: 查询后台任务列表
+      tags:
+      - 后台任务
+  /task/{id}:
+    get:
+      parameters:
+      - description: id
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/resp.CronTaskResponse'
+      summary: 获取单个后台任务详情
+      tags:
+      - 后台任务
+    put:
+      parameters:
+      - description: id
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/resp.Response'
+      summary: 重启后台任务
+      tags:
+      - 后台任务
+  /task/{id}/download:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: id
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: 下载任务参数
+        in: body
+        name: factorThemeReq
+        required: true
+        schema:
+          $ref: '#/definitions/entity.FactorThemeReq'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/resp.IdResponse'
+      summary: 申请下载任务数据
+      tags:
+      - 后台任务
+  /task/{id}/zip:
+    get:
+      parameters:
+      - description: id
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/zip
+      responses:
+        "200":
+          description: OK
+          schema:
+            type: file
+        "400":
+          description: Bad Request
+        "404":
+          description: Not Found
+        "500":
+          description: Internal Server Error
+      summary: 下载任务数据
+      tags:
+      - 后台任务
+  /xxx:
+    delete:
+      parameters:
+      - description: ids
+        in: query
+        items:
+          type: integer
+        name: ids
+        required: true
+        type: array
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/resp.Response'
+      summary: 批量删除XXX数据
+      tags:
+      - XXX数据
+    get:
+      parameters:
+      - description: 页码，从1开始
+        in: query
+        name: page
+        type: integer
+      - description: 页面大小，默认10
+        in: query
+        name: size
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/resp.Response'
+      summary: 查询XXX数据列表
+      tags:
+      - XXX数据
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: 数据的值
+        in: body
+        name: value
+        required: true
+        schema:
+          $ref: '#/definitions/dto.NewXxxData'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/resp.IdResponse'
+      summary: 新增XXX数据
+      tags:
+      - XXX数据
+  /xxx/{id}:
+    get:
+      parameters:
+      - description: id
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/resp.Response'
+      summary: 获取单个XXX数据详情
+      tags:
+      - XXX数据
+swagger: "2.0"
