@@ -52,7 +52,7 @@ func newHTTPServer() *gin.Engine {
 	gxh.POST("", xh.Create)
 	gxh.DELETE("", xh.Deletes)
 	gxh.GET("", xh.QueryList)
-	gxh.POST("/:id", xh.QueryDetail)
+	gxh.GET("/:id", xh.QueryDetail)
 
 	// 设置模块
 	sh := http_handler.NewSettingHandler()
